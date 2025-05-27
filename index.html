@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Absensi Karyawan | Modern System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            dark: '#1F2937',
+            light: '#F9FAFB',
+          },
+          boxShadow: {
+            'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F3F4F6;
+    }
+    
+    .form-input {
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .success-alert {
+      animation: fadeInOut 2.5s ease-in-out;
+    }
+    
+    .error-alert {
+      animation: fadeInOut 3s ease-in-out;
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.85);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="absolute inset-0 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-100 opacity-90"></div>
+    <div class="absolute top-0 right-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+  </div>
+
+  <div class="relative w-full max-w-md glass-effect rounded-2xl shadow-2xl overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
+    
+    <div class="px-8 py-10">
+      <div class="flex justify-center mb-8">
+        <div class="bg-white p-3 rounded-xl shadow-lg">
+          <i class="fas fa-fingerprint text-3xl text-primary"></i>
+        </div>
+      </div>
+      
+      <h1 class="text-2xl font-bold text-center text-dark mb-2">Absen Online</h1>
+      <p class="text-gray-500 text-center mb-8">absen akan otomatis terkirim di bot telegram</p>
+      
+      <form id="absenForm" class="space-y-5">
+        <div>
+          <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-user text-gray-400"></i>
+            </div>
+            <input 
+              type="text" 
+              id="nama" 
+              name="nama" 
+              required 
+              class="form-input pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" 
+              placeholder="Sucipto"
+            >
+          </div>
+        </div>
+        
+        <div>
+          <label for="umur" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-birthday-cake text-gray-400"></i>
+            </div>
+            <input 
+              type="number" 
+              id="umur" 
+              name="umur" 
+              required 
+              class="form-input pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" 
+              placeholder="28"
+            >
+          </div>
+        </div>
+        
+        <div>
+          <label for="kelas" class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-building text-gray-400"></i>
+            </div>
+            <input 
+              type="text" 
+              id="kelas" 
+              name="kelas" 
+              required 
+              class="form-input pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" 
+              placeholder="X-RPL-III"
+            >
+          </div>
+        </div>
+        
+        <div>
+          <button 
+            type="submit" 
+            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300"
+          >
+            <i class="fas fa-paper-plane mr-2"></i> Kirim Absen
+          </button>
+        </div>
+      </form>
+      
+      <div id="alert" class="success-alert hidden mt-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm font-medium text-center">
+        <i class="fas fa-check-circle mr-1"></i> Absen Terkirim!
+      </div>
+      
+      <div id="alertError" class="error-alert hidden mt-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm font-medium text-center">
+        <i class="fas fa-exclamation-circle mr-1"></i> Gagal Mengirim Absen
+      </div>
+    </div>
+    
+    <div class="bg-gray-50 px-8 py-4 text-center">
+      <p class="text-xs text-gray-500">
+        <i class="far fa-clock mr-1"></i> Current time: <span id="currentTime" class="font-medium"></span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent = now.toLocaleString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+    
+    setInterval(updateTime, 1000);
+    updateTime();
+    
+    document.getElementById("absenForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      
+      const nama = document.getElementById("nama").value;
+      const umur = document.getElementById("umur").value;
+      const kelas = document.getElementById("kelas").value;
+      const waktu = new Date().toLocaleString();
+      
+      const simulateSuccess = Math.random() > 0.2; 
+      
+      const alertSuccess = document.getElementById("alert");
+      const alertError = document.getElementById("alertError");
+      
+      alertSuccess.classList.add('hidden');
+      alertError.classList.add('hidden');
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnContent = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+      submitBtn.disabled = true;
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      if (simulateSuccess) {
+        alertSuccess.classList.remove('hidden');
+        setTimeout(() => {
+          alertSuccess.classList.add('hidden');
+          document.getElementById("absenForm").reset();
+        }, 2500);
+      } else {
+        alertError.classList.remove('hidden');
+        setTimeout(() => {
+          alertError.classList.add('hidden');
+        }, 3000);
+      }
+      
+      submitBtn.innerHTML = originalBtnContent;
+      submitBtn.disabled = false;      
+      
+      const res = await fetch("/api/absen", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ nama, umur, kelas, waktu })
+      });
+      
+      if (res.ok) {
+        alertSuccess.classList.remove('hidden');
+        setTimeout(() => {
+          alertSuccess.classList.add('hidden');
+          document.getElementById("absenForm").reset();
+        }, 2500);
+      } else {
+        alertError.classList.remove('hidden');
+        setTimeout(() => {
+          alertError.classList.add('hidden');
+        }, 3000);
+      }
+      */
+    });
+  </script>
+</body>
+</html>
