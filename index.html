@@ -41,23 +41,73 @@
     }
     
     .success-alert {
-      animation: fadeInOut 2.5s ease-in-out;
+      animation: fadeInOut 3s ease-in-out;
     }
     
     .error-alert {
-      animation: fadeInOut 3s ease-in-out;
+      animation: fadeInOut 4s ease-in-out;
+    }
+    
+    .warning-alert {
+      animation: fadeInOut 4s ease-in-out;
     }
     
     @keyframes fadeInOut {
       0% { opacity: 0; transform: translateY(10px); }
       10% { opacity: 1; transform: translateY(0); }
-      90% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
       100% { opacity: 0; transform: translateY(-10px); }
     }
     
     .glass-effect {
       backdrop-filter: blur(10px);
       background: rgba(255, 255, 255, 0.85);
+    }
+
+    .animate-blob {
+      animation: blob 7s infinite;
+    }
+
+    .animation-delay-2000 {
+      animation-delay: 2s;
+    }
+
+    .animation-delay-4000 {
+      animation-delay: 4s;
+    }
+
+    @keyframes blob {
+      0% {
+        transform: translate(0px, 0px) scale(1);
+      }
+      33% {
+        transform: translate(30px, -50px) scale(1.1);
+      }
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+      100% {
+        transform: translate(0px, 0px) scale(1);
+      }
+    }
+
+    .connection-status {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .status-online {
+      background-color: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-offline {
+      background-color: #FEE2E2;
+      color: #991B1B;
     }
   </style>
 </head>
@@ -73,14 +123,22 @@
     <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
     
     <div class="px-8 py-10">
-      <div class="flex justify-center mb-8">
+      <div class="flex justify-center mb-6">
         <div class="bg-white p-3 rounded-xl shadow-lg">
           <i class="fas fa-fingerprint text-3xl text-primary"></i>
         </div>
       </div>
       
       <h1 class="text-2xl font-bold text-center text-dark mb-2">Absen Online</h1>
-      <p class="text-gray-500 text-center mb-8">absen akan otomatis terkirim di bot telegram</p>
+      <p class="text-gray-500 text-center mb-4">absen akan otomatis terkirim di bot telegram</p>
+      
+      <!-- Connection Status -->
+      <div class="text-center mb-6">
+        <span id="connectionStatus" class="connection-status status-offline">
+          <i class="fas fa-circle text-xs"></i>
+          <span>Mengecek koneksi...</span>
+        </span>
+      </div>
       
       <form id="absenForm" class="space-y-5">
         <div>
@@ -137,19 +195,29 @@
         <div>
           <button 
             type="submit" 
-            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300"
+            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <i class="fas fa-paper-plane mr-2"></i> Kirim Absen
           </button>
         </div>
       </form>
       
-      <div id="alert" class="success-alert hidden mt-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm font-medium text-center">
-        <i class="fas fa-check-circle mr-1"></i> Absen Terkirim!
+      <!-- Success Alert -->
+      <div id="alertSuccess" class="success-alert hidden mt-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm font-medium text-center">
+        <i class="fas fa-check-circle mr-1"></i> 
+        <span id="successMessage">Absen Terkirim ke Telegram!</span>
       </div>
       
+      <!-- Error Alert -->
       <div id="alertError" class="error-alert hidden mt-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm font-medium text-center">
-        <i class="fas fa-exclamation-circle mr-1"></i> Gagal Mengirim Absen
+        <i class="fas fa-exclamation-circle mr-1"></i> 
+        <span id="errorMessage">Gagal Mengirim Absen</span>
+      </div>
+
+      <!-- Warning Alert -->
+      <div id="alertWarning" class="warning-alert hidden mt-4 p-3 rounded-lg bg-yellow-50 text-yellow-700 text-sm font-medium text-center">
+        <i class="fas fa-exclamation-triangle mr-1"></i> 
+        <span id="warningMessage">Server tidak terhubung, absen disimpan lokal</span>
       </div>
     </div>
     
@@ -161,6 +229,9 @@
   </div>
 
   <script>
+    let isServerOnline = false;
+    
+    // Update waktu
     function updateTime() {
       const now = new Date();
       document.getElementById('currentTime').textContent = now.toLocaleString('id-ID', {
@@ -174,68 +245,173 @@
       });
     }
     
-    setInterval(updateTime, 1000);
-    updateTime();
+    // Cek koneksi server
+    async function checkServerConnection() {
+      try {
+        const response = await fetch('/api/health', {
+          method: 'GET',
+          signal: AbortSignal.timeout(3000) // 3 detik timeout
+        });
+        
+        if (response.ok) {
+          isServerOnline = true;
+          updateConnectionStatus(true, 'Server Online');
+        } else {
+          isServerOnline = false;
+          updateConnectionStatus(false, 'Server Error');
+        }
+      } catch (error) {
+        isServerOnline = false;
+        updateConnectionStatus(false, 'Server Offline');
+      }
+    }
     
+    // Update status koneksi
+    function updateConnectionStatus(online, message) {
+      const statusElement = document.getElementById('connectionStatus');
+      const icon = statusElement.querySelector('i');
+      const textElement = statusElement.querySelector('span');
+      
+      if (online) {
+        statusElement.className = 'connection-status status-online';
+        icon.className = 'fas fa-circle text-xs';
+        textElement.textContent = message;
+      } else {
+        statusElement.className = 'connection-status status-offline';
+        icon.className = 'fas fa-circle text-xs';
+        textElement.textContent = message;
+      }
+    }
+    
+    // Simpan data lokal
+    function saveToLocal(data) {
+      try {
+        let localData = JSON.parse(localStorage.getItem('absensiLokal') || '[]');
+        localData.push(data);
+        localStorage.setItem('absensiLokal', JSON.stringify(localData));
+        return true;
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+        return false;
+      }
+    }
+    
+    // Kirim data ke server
+    async function sendToServer(data) {
+      try {
+        const response = await fetch('/api/absen', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/x-www-form-urlencoded' 
+          },
+          body: new URLSearchParams(data),
+          signal: AbortSignal.timeout(10000) // 10 detik timeout
+        });
+        
+        return response.ok;
+      } catch (error) {
+        console.error('Error sending to server:', error);
+        return false;
+      }
+    }
+    
+    // Show alert dengan auto hide
+    function showAlert(type, message, duration = 3000) {
+      const alerts = ['alertSuccess', 'alertError', 'alertWarning'];
+      
+      // Hide semua alert
+      alerts.forEach(alertId => {
+        document.getElementById(alertId).classList.add('hidden');
+      });
+      
+      // Show alert yang dipilih
+      const alertElement = document.getElementById(type);
+      const messageElement = alertElement.querySelector('span');
+      messageElement.textContent = message;
+      alertElement.classList.remove('hidden');
+      
+      // Auto hide
+      setTimeout(() => {
+        alertElement.classList.add('hidden');
+      }, duration);
+    }
+    
+    // Handle form submit
     document.getElementById("absenForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       
-      const nama = document.getElementById("nama").value;
-      const umur = document.getElementById("umur").value;
-      const kelas = document.getElementById("kelas").value;
-      const waktu = new Date().toLocaleString();
-      
-      const simulateSuccess = Math.random() > 0.2; 
-      
-      const alertSuccess = document.getElementById("alert");
-      const alertError = document.getElementById("alertError");
-      
-      alertSuccess.classList.add('hidden');
-      alertError.classList.add('hidden');
-      
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalBtnContent = submitBtn.innerHTML;
+      
+      // Disable button dan show loading
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
       submitBtn.disabled = true;
       
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Ambil data form
+      const formData = {
+        nama: document.getElementById("nama").value,
+        umur: document.getElementById("umur").value,
+        kelas: document.getElementById("kelas").value,
+        waktu: new Date().toLocaleString('id-ID', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })
+      };
       
-      if (simulateSuccess) {
-        alertSuccess.classList.remove('hidden');
-        setTimeout(() => {
-          alertSuccess.classList.add('hidden');
-          document.getElementById("absenForm").reset();
-        }, 2500);
-      } else {
-        alertError.classList.remove('hidden');
-        setTimeout(() => {
-          alertError.classList.add('hidden');
-        }, 3000);
+      try {
+        // Cek koneksi server dulu
+        await checkServerConnection();
+        
+        if (isServerOnline) {
+          // Kirim ke server
+          const success = await sendToServer(formData);
+          
+          if (success) {
+            showAlert('alertSuccess', 'Absen berhasil dikirim ke Telegram!', 3000);
+            document.getElementById("absenForm").reset();
+          } else {
+            // Server error, simpan lokal
+            const localSaved = saveToLocal(formData);
+            if (localSaved) {
+              showAlert('alertWarning', 'Server error, absen disimpan secara lokal', 4000);
+              document.getElementById("absenForm").reset();
+            } else {
+              showAlert('alertError', 'Gagal menyimpan absen', 3000);
+            }
+          }
+        } else {
+          // Server offline, simpan lokal
+          const localSaved = saveToLocal(formData);
+          if (localSaved) {
+            showAlert('alertWarning', 'Server offline, absen disimpan secara lokal', 4000);
+            document.getElementById("absenForm").reset();
+          } else {
+            showAlert('alertError', 'Gagal menyimpan absen', 3000);
+          }
+        }
+        
+      } catch (error) {
+        console.error('Error processing form:', error);
+        showAlert('alertError', 'Terjadi kesalahan sistem', 3000);
       }
       
+      // Reset button
       submitBtn.innerHTML = originalBtnContent;
-      submitBtn.disabled = false;      
-      
-      const res = await fetch("/api/absen", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ nama, umur, kelas, waktu })
-      });
-      
-      if (res.ok) {
-        alertSuccess.classList.remove('hidden');
-        setTimeout(() => {
-          alertSuccess.classList.add('hidden');
-          document.getElementById("absenForm").reset();
-        }, 2500);
-      } else {
-        alertError.classList.remove('hidden');
-        setTimeout(() => {
-          alertError.classList.add('hidden');
-        }, 3000);
-      }
-      */
+      submitBtn.disabled = false;
     });
+    
+    // Initialize
+    setInterval(updateTime, 1000);
+    updateTime();
+    
+    // Cek koneksi server saat load dan setiap 30 detik
+    checkServerConnection();
+    setInterval(checkServerConnection, 30000);
   </script>
 </body>
 </html>
