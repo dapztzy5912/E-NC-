@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Absensi Karyawan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -11,92 +14,124 @@
       box-sizing: border-box;
     }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #ff8a00, #e52e71);
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fa;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      color: #fff;
+      color: #212529;
     }
     .form-container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      padding: 48px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
       width: 100%;
       max-width: 500px;
       text-align: center;
+      border: 1px solid #e9ecef;
     }
     .form-container h2 {
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: #fff;
+      font-size: 28px;
+      margin-bottom: 32px;
+      color: #212529;
+      font-weight: 600;
+      letter-spacing: -0.5px;
     }
     label {
       display: block;
-      font-size: 16px;
-      margin: 10px 0 5px;
-      color: #fff;
+      font-size: 14px;
+      margin: 16px 0 8px;
+      color: #495057;
+      text-align: left;
+      font-weight: 500;
     }
     input {
       width: 100%;
-      padding: 12px;
-      margin-top: 5px;
+      padding: 14px 16px;
+      margin-top: 4px;
       border-radius: 8px;
-      border: 1px solid #ddd;
-      background: #fff;
-      color: #333;
-      font-size: 16px;
+      border: 1px solid #e9ecef;
+      background: #ffffff;
+      color: #212529;
+      font-size: 15px;
       outline: none;
-      transition: border 0.3s ease;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
     }
     input:focus {
-      border-color: #ff8a00;
+      border-color: #1971c2;
+      box-shadow: 0 0 0 3px rgba(25, 113, 194, 0.1);
     }
     button {
       width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      background-color: #ff8a00;
+      padding: 16px;
+      margin-top: 24px;
+      background-color: #1971c2;
       border: none;
-      color: #fff;
+      color: #ffffff;
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
     }
     button:hover {
-      background-color: #e52e71;
+      background-color: #1864ab;
     }
     .alert {
-      margin-top: 20px;
-      color: #28a745;
-      font-weight: bold;
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 8px;
+      font-weight: 500;
       display: none;
+      text-align: center;
+    }
+    .alert.success {
+      background-color: #ebfbee;
+      color: #2b8a3e;
+      border: 1px solid #d3f9d8;
     }
     .alert.error {
-      color: #dc3545;
+      background-color: #fff5f5;
+      color: #c92a2a;
+      border: 1px solid #ffd8d8;
+    }
+    .form-header {
+      margin-bottom: 32px;
+    }
+    .form-header svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      color: #1971c2;
     }
   </style>
 </head>
 <body>
   <div class="form-container">
-    <h2>Form Absensi</h2>
+    <div class="form-header">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h2>Form Absensi Karyawan</h2>
+    </div>
     <form id="absenForm">
-      <label for="nama">Nama</label>
-      <input type="text" id="nama" name="nama" required />
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required />
 
       <label for="umur">Umur</label>
-      <input type="number" id="umur" name="umur" required />
+      <input type="number" id="umur" name="umur" placeholder="Masukkan umur" required />
 
       <label for="kelas">Kelas / Divisi</label>
-      <input type="text" id="kelas" name="kelas" required />
+      <input type="text" id="kelas" name="kelas" placeholder="Masukkan kelas atau divisi" required />
 
       <button type="submit">Kirim Absensi</button>
-      <div id="alert" class="alert">Absensi berhasil!</div>
-      <div id="alertError" class="alert error">Gagal mengirim absensi! Coba lagi.</div>
+      <div id="alert" class="alert success">Absensi berhasil dikirim!</div>
+      <div id="alertError" class="alert error">Gagal mengirim absensi! Silakan coba lagi.</div>
     </form>
   </div>
 
