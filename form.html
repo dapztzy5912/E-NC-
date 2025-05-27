@@ -3,208 +3,132 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Absensi Karyawan | Premium</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Absensi Karyawan</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #020617;
-      background-image: 
-        radial-gradient(at 80% 0%, hsla(189,100%,56%,0.1) 0px, transparent 50%),
-        radial-gradient(at 0% 50%, hsla(355,100%,93%,0.1) 0px, transparent 50%);
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ff8a00, #e52e71);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
     }
-    
-    .glass-effect {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+    .form-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
     }
-    
-    .input-field {
-      transition: all 0.3s ease;
-      background: rgba(30, 41, 59, 0.5);
+    .form-container h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #fff;
     }
-    
-    .input-field:focus {
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    label {
+      display: block;
+      font-size: 16px;
+      margin: 10px 0 5px;
+      color: #fff;
     }
-    
-    .submit-btn {
-      transition: all 0.3s ease;
-      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #333;
+      font-size: 16px;
+      outline: none;
+      transition: border 0.3s ease;
     }
-    
-    .submit-btn:hover {
-      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    input:focus {
+      border-color: #ff8a00;
     }
-    
-    .submit-btn:active {
-      transform: translateY(0);
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #ff8a00;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
     }
-    
-    .alert-success {
-      animation: slideIn 0.5s ease-out;
+    button:hover {
+      background-color: #e52e71;
     }
-    
-    .alert-error {
-      animation: shake 0.5s ease-out;
+    .alert {
+      margin-top: 20px;
+      color: #28a745;
+      font-weight: bold;
+      display: none;
     }
-    
-    @keyframes slideIn {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-5px); }
-      40%, 80% { transform: translateX(5px); }
+    .alert.error {
+      color: #dc3545;
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-  <div class="glass-effect w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
-    <div class="bg-gradient-to-r from-gray-900 to-gray-800 p-6 text-center">
-      <div class="flex justify-center mb-4">
-        <div class="bg-blue-500/20 p-3 rounded-full">
-          <i class="fas fa-fingerprint text-blue-400 text-2xl"></i>
-        </div>
-      </div>
-      <h1 class="text-2xl font-bold text-white mb-1">ABSENSI KARYAWAN</h1>
-      <p class="text-slate-400 text-sm">Silakan isi data diri Anda untuk absensi</p>
-    </div>
-    
-    <form id="absenForm" class="p-6 space-y-5">
-      <div class="space-y-2">
-        <label for="nama" class="block text-sm font-medium text-slate-300">Nama</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fas fa-user text-slate-500"></i>
-          </div>
-          <input 
-            type="text" 
-            id="nama" 
-            name="nama" 
-            required 
-            class="input-field pl-10 w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Masukkan nama"
-          >
-        </div>
-      </div>
-      
-      <div class="space-y-2">
-        <label for="umur" class="block text-sm font-medium text-slate-300">Umur</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fas fa-calendar-days text-slate-500"></i>
-          </div>
-          <input 
-            type="number" 
-            id="umur" 
-            name="umur" 
-            required 
-            class="input-field pl-10 w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Masukkan umur"
-          >
-        </div>
-      </div>
-      
-      <div class="space-y-2">
-        <label for="kelas" class="block text-sm font-medium text-slate-300">Kelas / Divisi</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fas fa-building text-slate-500"></i>
-          </div>
-          <input 
-            type="text" 
-            id="kelas" 
-            name="kelas" 
-            required 
-            class="input-field pl-10 w-full px-4 py-3 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Masukkan kelas/divisi"
-          >
-        </div>
-      </div>
-      
-      <button 
-        type="submit" 
-        class="submit-btn w-full py-3 px-4 rounded-lg text-white font-semibold shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
-      >
-        <i class="fas fa-paper-plane"></i>
-        <span>Kirim Absensi</span>
-      </button>
-      
-      <div id="alert" class="alert-success hidden bg-green-900/50 border border-green-800 text-green-200 px-4 py-3 rounded-lg text-sm">
-        <div class="flex items-center space-x-2">
-          <i class="fas fa-check-circle text-green-400"></i>
-          <span>Absensi berhasil!</span>
-        </div>
-      </div>
-      
-      <div id="alertError" class="alert-error hidden bg-red-900/50 border border-red-800 text-red-200 px-4 py-3 rounded-lg text-sm">
-        <div class="flex items-center space-x-2">
-          <i class="fas fa-exclamation-circle text-red-400"></i>
-          <span>Gagal mengirim absensi! Coba lagi.</span>
-        </div>
-      </div>
+<body>
+  <div class="form-container">
+    <h2>Form Absensi</h2>
+    <form id="absenForm">
+      <label for="nama">Nama</label>
+      <input type="text" id="nama" name="nama" required />
+
+      <label for="umur">Umur</label>
+      <input type="number" id="umur" name="umur" required />
+
+      <label for="kelas">Kelas / Divisi</label>
+      <input type="text" id="kelas" name="kelas" required />
+
+      <button type="submit">Kirim Absensi</button>
+      <div id="alert" class="alert">Absensi berhasil!</div>
+      <div id="alertError" class="alert error">Gagal mengirim absensi! Coba lagi.</div>
     </form>
   </div>
 
   <script>
     document.getElementById("absenForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      
       const nama = document.getElementById("nama").value;
       const umur = document.getElementById("umur").value;
       const kelas = document.getElementById("kelas").value;
       const waktu = new Date().toLocaleString();
 
-      const alertSuccess = document.getElementById("alert");
-      const alertError = document.getElementById("alertError");
-      
-      alertSuccess.classList.add('hidden');
-      alertError.classList.add('hidden');
-      
-      const isSuccess = Math.random() > 0.2;
-      
-      if (isSuccess) {
-        alertSuccess.classList.remove('hidden');
-        setTimeout(() => {
-          alertSuccess.classList.add('hidden');
-          document.getElementById("absenForm").reset();
-        }, 2000);
-      } else {
-        alertError.classList.remove('hidden');
-        setTimeout(() => {
-          alertError.classList.add('hidden');
-        }, 3000);
-      }
-      
       const res = await fetch("/api/absen", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ nama, umur, kelas, waktu })
       });
 
+      const alertSuccess = document.getElementById("alert");
+      const alertError = document.getElementById("alertError");
+      
       if (res.ok) {
-        alertSuccess.classList.remove('hidden');
+        alertSuccess.style.display = "block";
         setTimeout(() => {
-          alertSuccess.classList.add('hidden');
+          alertSuccess.style.display = "none";
           document.getElementById("absenForm").reset();
         }, 2000);
       } else {
-        alertError.classList.remove('hidden');
+        alertError.style.display = "block";
         setTimeout(() => {
-          alertError.classList.add('hidden');
+          alertError.style.display = "none";
         }, 3000);
       }
-      */
     });
   </script>
 </body>

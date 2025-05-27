@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js"
   },
-  "author": "NIGHTCODE",
+  "author": "FurqonCl",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.9.0",
